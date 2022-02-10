@@ -14,7 +14,7 @@ for i_episode in range(10):
         # print("\n___"+str(action)+"___\n")
         observation, reward, done, info = env.step(action)
         fitness += reward
-        print("\nFitness: "+str(fitness)+"\n")
+        # print("\nFitness: "+str(fitness)+"\n")
 
         if done:
             print("Episode finished after {} timesteps".format(t+1))
