@@ -13,16 +13,16 @@ class Network:
 
 
     def initparameters(self):
-        w1 = np.random.randn(self.nhiddens, self.ninputs) * self.pvariance
-        w2 = np.random.randn(self.noutputs, self.nhiddens) * self.pvariance
-        b1 = np.zeros(shape=(self.nhiddens, 1))
-        b2 = np.zeros(shape=(self.noutputs, 1))
+        self.w1 = np.random.randn(self.nhiddens, self.ninputs) * self.pvariance
+        self.w2 = np.random.randn(self.noutputs, self.nhiddens) * self.pvariance
+        self.b1 = np.zeros(shape=(self.nhiddens, 1))
+        self.b2 = np.zeros(shape=(self.noutputs, 1))
     
     def update(self, observation):
-        observation.resize(ninputs, 1)
-        z1 = np.dot(w1, observation) + b1
+        observation.resize(self.ninputs, 1)
+        z1 = np.dot(self.w1, observation) + self.b1
         a1 = np.tanh(z1)
-        z2 = np.dot(w2, a1) + b2
+        z2 = np.dot(self.w2, a1) + self.b2
         a2 = np.tanh(z2)
 
         if(isinstance(env.action_space, gym.spaces.box.Box)):
@@ -33,12 +33,14 @@ class Network:
     
     def evaluate(self, env):
         fitness = 0
+        observation = env.reset()
         for t in range(100):
             env.render()
             #print(observation)
-            action = update(observation)
+            action = self.update(observation)
             #print("\n___"+str(action)+"___\n")
             observation, reward, done, info = env.step(action)
+
             fitness += reward
             if done:
                 print("Episode finished after {} timesteps".format(t+1))
@@ -52,8 +54,9 @@ class Network:
 
 env = gym.make("CartPole-v0")
 for t in range(10):
-    observation = env.reset()
+    #observation = env.reset()
     network = Network(env)
     network.initparameters()
     fitness = network.evaluate(env)
+    print("Result fitness: ", str(fitness))
 env.close()
