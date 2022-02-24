@@ -17,46 +17,47 @@ class Network:
         self.w2 = np.random.randn(self.noutputs, self.nhiddens) * self.pvariance
         self.b1 = np.zeros(shape=(self.nhiddens, 1))
         self.b2 = np.zeros(shape=(self.noutputs, 1))
-    
+
     def update(self, observation):
         observation.resize(self.ninputs, 1)
         z1 = np.dot(self.w1, observation) + self.b1
         a1 = np.tanh(z1)
         z2 = np.dot(self.w2, a1) + self.b2
         a2 = np.tanh(z2)
-
         if(isinstance(env.action_space, gym.spaces.box.Box)):
             action = a2
         else:
             action = np.argmax(a2)
         return action
-    
-    def evaluate(self, env):
+
+    def evaluate(self, env, nepisodes, show = False):
         fitness = 0
         observation = env.reset()
-        for t in range(100):
-            env.render()
-            #print(observation)
-            action = self.update(observation)
-            #print("\n___"+str(action)+"___\n")
-            observation, reward, done, info = env.step(action)
+        for i_episode in range(nepisodes):
+            print("\n\n--------------Episode start------------")
+            for t in range(100):
+                if (show):
+                    env.render()
+                action = self.update(observation)
+                observation, reward, done, info = env.step(action)
 
-            fitness += reward
-            if done:
-                print("Episode finished after {} timesteps".format(t+1))
-                break
- 
+                fitness += reward
+                if done:
+                    print("Finished after {} timesteps".format(t+1))
+                    break
 
-        return fitness
+
+        return fitness / nepisodes
 
 
 
 
 env = gym.make("CartPole-v0")
+nepisodes = 20
+network = Network(env)
 for t in range(10):
-    #observation = env.reset()
-    network = Network(env)
     network.initparameters()
-    fitness = network.evaluate(env)
+    fitness = network.evaluate(env, nepisodes)
     print("Result fitness: ", str(fitness))
 env.close()
+
