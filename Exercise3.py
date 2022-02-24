@@ -96,9 +96,9 @@ for g in range(ngenerations):
         network.set_genotype(population[i])
         fit = network.evaluate(env, nepisodes)
         fitness.append(fit)
-    print(fitness)
+    #print(fitness)
     best_index = np.argsort(fitness)
-    print("\n best_index ", best_index)
+    #print("\n best_index ", best_index)
     for i in range(pop_half):
         population[best_index[i]] = population[best_index[i+pop_half]] + np.random.randn(nparameters) * pertubation_variance
 
@@ -106,6 +106,50 @@ for g in range(ngenerations):
 test
 '''
 for t in range(10):
+    network.set_genotype(population[best_index[-1]])
+    fitness = network.evaluate(env, nepisodes, show = True)
+    print("\n Best fitness: ", str(fitness))
+env.close()
+
+'''
+Acrobot-v1
+'''
+
+env = gym.make("Acrobot-v1")
+nepisodes = 3
+network = Network(env)
+
+
+popsize = 10
+pop_half = int(popsize / 2)
+variance = 0.1
+pertubation_variance = 0.02
+ngenerations = 100
+nepisodes = 3
+
+nparameters = network.compute_nparameters()
+population = np.random.randn(popsize, nparameters) * variance
+
+
+'''
+train
+'''
+for g in range(ngenerations):
+    fitness = []
+    for i in range(popsize):
+        network.set_genotype(population[i])
+        fit = network.evaluate(env, nepisodes)
+        fitness.append(fit)
+#    print(fitness)
+    best_index = np.argsort(fitness)
+#    print("\n best_index ", best_index)
+    for i in range(pop_half):
+        population[best_index[i]] = population[best_index[i+pop_half]] + np.random.randn(nparameters) * pertubation_variance
+
+'''
+test
+'''
+for t in range(3):
     network.set_genotype(population[best_index[-1]])
     fitness = network.evaluate(env, nepisodes, show = True)
     print("\n Best fitness: ", str(fitness))
